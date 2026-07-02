@@ -7,9 +7,44 @@
 
 import Foundation
 
-struct FeedItem: Equatable {
+struct FeedItem: Decodable, Equatable {
     let id: UUID
     let description: String?
     let location: String?
     let imageURL: URL
+    
+    init(id: UUID, description: String? = nil, location: String? = nil, imageURL: URL) {
+        self.id = id
+        self.description = description
+        self.location = location
+        self.imageURL = imageURL
+    }
+    
+    func getItemJSON() ->  [String: String] {
+        var itemDec = [String: String]()
+        
+        itemDec["id"] = id.uuidString
+        if let description {
+            itemDec["description"] = description
+        }
+        
+        if let location {
+            itemDec["location"] = location
+        }
+        
+        itemDec["image"] = imageURL.absoluteString
+        
+        return itemDec
+    }
+    
+    private enum CodingKeys: String, CodingKey {
+        case id
+        case description
+        case location
+        case imageURL = "image"
+    }
+}
+
+struct FeedItems: Decodable {
+    let items: [FeedItem]
 }

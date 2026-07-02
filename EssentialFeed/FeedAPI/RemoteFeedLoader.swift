@@ -28,17 +28,25 @@ final class RemoteFeedLoader {
         case connectivity
     }
     
+    enum Result: Equatable {
+        case success([FeedItem])
+        case failure(Error)
+    }
+    
     init(url: URL = URL(string: "https://dummy.com")!, client: HTTPClient) {
         self.url = url
         self.client = client
     }
     
-    func load(completion: @escaping HTTPClientResultCompletion) {
+    func load(completion: @escaping (Result) -> Void) {
         client.get(from: url) { result in
             switch result {
-            case .success:
-//                completion(.success(response))
-                completion(.failure(Error.invalidData))
+            case let .success(data, _):
+                if let _ = try? JSONSerialization.jsonObject(with: data) {
+                    completion(.success([]))
+                } else {
+                    completion(.failure(Error.invalidData))
+                }
             case .failure:
                 completion(.failure(Error.connectivity))
             }

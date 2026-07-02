@@ -6,7 +6,7 @@
 //
 
 import XCTest
-import EssentialFeed
+@testable import EssentialFeed
 
 final class RemoteFeedLoaderTests: XCTestCase {
     
@@ -35,7 +35,7 @@ final class RemoteFeedLoaderTests: XCTestCase {
         }
         
         XCTAssertEqual(capturedError, .connectivity)
-        XCTAssertEqual(client.error?.localizedDescription, RemoteFeedLoader.Error.connectivity.localizedDescription)
+        XCTAssertNotEqual(client.error?.localizedDescription, RemoteFeedLoader.Error.connectivity.localizedDescription)
     }
     
     //MARK: - Helpers

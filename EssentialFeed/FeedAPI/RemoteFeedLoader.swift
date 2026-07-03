@@ -17,10 +17,7 @@ final class RemoteFeedLoader {
         case connectivity
     }
     
-    enum Result: Equatable {
-        case success([FeedItem])
-        case failure(Error)
-    }
+    typealias Result = LoadFeedResult<Error>
     
     init(url: URL = URL(string: "https://dummy.com")!, client: HTTPClient) {
         self.url = url
@@ -36,7 +33,7 @@ final class RemoteFeedLoader {
             case let .success(data, response):
                 completion(FeedItemsMapper.map(data, response))
             case .failure:
-                completion(.failure(Error.connectivity))
+                completion(.failure(.connectivity)) // Domain lvl Error
             }
             
         }

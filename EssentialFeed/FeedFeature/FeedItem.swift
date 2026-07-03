@@ -30,15 +30,19 @@ struct FeedItem: Decodable, Equatable {
         
         return itemDec
     }
-    
-    private enum CodingKeys: String, CodingKey {
-        case id
-        case description
-        case location
-        case imageURL = "image"
-    }
 }
 
 struct FeedItems: Decodable {
-    let items: [FeedItem]
+    let items: [Item]
+}
+
+struct Item: Decodable {
+    let id: UUID
+    let description: String?
+    let location: String?
+    let image: URL
+    
+    var item: FeedItem {
+        FeedItem(id: id, description: description, location: location, imageURL: image)
+    }
 }

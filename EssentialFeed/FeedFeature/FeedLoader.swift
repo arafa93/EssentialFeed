@@ -12,7 +12,8 @@ enum LoadFeedResult<Error: Swift.Error> {
     case failure(Error)
 }
 
-extension LoadFeedResult: Equatable where Error: Equatable {}
+// We will rmeove it because the equatable is only required for the testing and this is wrong to keep it for the production as well
+// extension LoadFeedResult: Equatable where Error: Equatable {}
 
 protocol FeedLoader {
     associatedtype Error: Swift.Error

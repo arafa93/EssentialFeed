@@ -21,18 +21,12 @@ struct FeedItem: Decodable, Equatable {
     }
     
     func getItemJSON() ->  [String: String] {
-        var itemDec = [String: String]()
-        
-        itemDec["id"] = id.uuidString
-        if let description {
-            itemDec["description"] = description
-        }
-        
-        if let location {
-            itemDec["location"] = location
-        }
-        
-        itemDec["image"] = imageURL.absoluteString
+        let itemDec = [
+            "id": id.uuidString,
+            "description": description,
+            "location": location,
+            "image": imageURL.absoluteString
+        ].compactMapValues { $0 }
         
         return itemDec
     }

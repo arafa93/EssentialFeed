@@ -70,18 +70,11 @@ final class RemoteFeedLoaderTests: XCTestCase {
     
     func test_load_deliversItemsOn200HTTPResponseWithValidJSON() {
         let (sut, client) = makeSUT()
+
+        let makeItems = makeItems()
         
-        let item1 = FeedItem(id: UUID(),
-                             imageURL: URL(string: "http://a-url.com")!)
-        let item2 = FeedItem(id: UUID(),
-                             description: "a description",
-                             location: "a location",
-                             imageURL: URL(string: "http://another-url.com")!)
-        let itemsJSON = [
-            "items" : [item1.getItemJSON(), item2.getItemJSON()]
-        ]
-        expect(sut, toCompleteWith: .success([item1, item2])) {
-            let json = try! JSONSerialization.data(withJSONObject: itemsJSON)
+        expect(sut, toCompleteWith: .success(makeItems.items)) {
+            let json = try! JSONSerialization.data(withJSONObject: makeItems.itemsJSON)
             client.complete(withStatusCode: 200, data: json)
         }
     }
@@ -94,6 +87,21 @@ final class RemoteFeedLoaderTests: XCTestCase {
         let client = HTTPClientSpy()
         let sut = RemoteFeedLoader(url: url, client: client)
         return (sut: sut, client: client)
+    }
+    
+    typealias itemsJson = [String : [[String:String]]]
+    private func makeItems() -> (items: [FeedItem], itemsJSON: itemsJson) {
+        let item1 = FeedItem(id: UUID(),
+                             imageURL: URL(string: "http://a-url.com")!)
+        let item2 = FeedItem(id: UUID(),
+                             description: "a description",
+                             location: "a location",
+                             imageURL: URL(string: "http://another-url.com")!)
+        let itemsJSON = [
+            "items" : [item1.getItemJSON(), item2.getItemJSON()]
+        ]
+        
+        return (items: [item1, item2], itemsJSON: itemsJSON)
     }
     
     private func expect(_ sut: RemoteFeedLoader,

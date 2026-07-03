@@ -7,12 +7,12 @@
 
 import Foundation
 
+typealias HTTPClientResultCompletion = (HTTPClientResult) -> Void
+
 enum HTTPClientResult {
     case success(Data, HTTPURLResponse)
     case failure(Error)
 }
-
-typealias HTTPClientResultCompletion = (HTTPClientResult) -> Void
 
 protocol HTTPClient {
     func get(from url: URL, completion: @escaping HTTPClientResultCompletion)

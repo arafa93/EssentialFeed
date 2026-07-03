@@ -71,7 +71,6 @@ final class RemoteFeedLoaderTests: XCTestCase {
     
     func test_load_deliversItemsOn200HTTPResponseWithValidJSON() {
         let (sut, client) = makeSUT()
-
         let makeItems = makeItems()
         
         expect(sut, toCompleteWith: .success(makeItems.items)) {
@@ -142,7 +141,7 @@ final class RemoteFeedLoaderTests: XCTestCase {
         }
         
         func complete(withStatusCode code: Int,
-                      data: Data = Data(),
+                      data: Data,
                       at index: Int = 0) {
             let response = HTTPURLResponse(url: requestedURLs[index],
                                            statusCode: code,

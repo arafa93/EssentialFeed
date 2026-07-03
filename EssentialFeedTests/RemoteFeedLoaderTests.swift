@@ -45,9 +45,10 @@ final class RemoteFeedLoaderTests: XCTestCase {
         let (sut, client) = makeSUT()
         let statusSamples = [199, 201, 300, 400, 500]
         
-        statusSamples.enumerated().forEach { index, status in
+        statusSamples.enumerated().forEach { index, code in
             expect(sut, toCompleteWith: .failure(.invalidData)) {
-                client.complete(withStatucCode: 400, at: index)
+                let json = try! JSONSerialization.data(withJSONObject: itemsToJSON(feedItems: []))
+                client.complete(withStatusCode: code, data: json, at: index)
             }
         }
     }
@@ -90,6 +91,7 @@ final class RemoteFeedLoaderTests: XCTestCase {
     }
     
     typealias itemsJson = [String : [[String:String]]]
+    
     private func makeItems() -> (items: [FeedItem], itemsJSON: itemsJson) {
         let item1 = FeedItem(id: UUID(),
                              imageURL: URL(string: "http://a-url.com")!)
@@ -97,11 +99,15 @@ final class RemoteFeedLoaderTests: XCTestCase {
                              description: "a description",
                              location: "a location",
                              imageURL: URL(string: "http://another-url.com")!)
-        let itemsJSON = [
-            "items" : [item1.getItemJSON(), item2.getItemJSON()]
-        ]
         
-        return (items: [item1, item2], itemsJSON: itemsJSON)
+        let feedItems = [item1, item2]
+        let itemsJSON = itemsToJSON(feedItems: feedItems)
+        
+        return (items: feedItems, itemsJSON: itemsJSON)
+    }
+    
+    private func itemsToJSON(feedItems: [FeedItem]) -> itemsJson {
+        return [ "items" : feedItems.map { $0.getItemJSON() } ]
     }
     
     private func expect(_ sut: RemoteFeedLoader,
@@ -133,15 +139,6 @@ final class RemoteFeedLoaderTests: XCTestCase {
         func complete(with error: Error,
                       at index: Int = 0) {
             messages[index].completion(.failure(error))
-        }
-        
-        func complete(withStatucCode code: Int,
-                      at index: Int = 0) {
-            let response = HTTPURLResponse(url: requestedURLs[index],
-                                           statusCode: code,
-                                           httpVersion: nil,
-                                           headerFields: nil)!
-            messages[index].completion(.success(Data(), response))
         }
         
         func complete(withStatusCode code: Int,

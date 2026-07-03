@@ -31,18 +31,3 @@ struct FeedItem: Decodable, Equatable {
         return itemDec
     }
 }
-
-struct FeedItems: Decodable {
-    let items: [Item]
-}
-
-struct Item: Decodable {
-    let id: UUID
-    let description: String?
-    let location: String?
-    let image: URL
-    
-    var item: FeedItem {
-        FeedItem(id: id, description: description, location: location, imageURL: image)
-    }
-}

@@ -35,7 +35,7 @@ final class RemoteFeedLoaderTests: XCTestCase {
     func test_load_deliversErrorOnClientError() {
         let (sut, client) = makeSUT()
         
-        expect(sut, toCompleteWith: .failure(.connectivity)) {
+        expect(sut, toCompleteWith: failure(.connectivity)) {
             let clientError = NSError(domain: "Test Error", code: 0) as Error
             client.complete(with: clientError)
         }
@@ -46,7 +46,7 @@ final class RemoteFeedLoaderTests: XCTestCase {
         let statusSamples = [199, 201, 300, 400, 500]
         
         statusSamples.enumerated().forEach { index, code in
-            expect(sut, toCompleteWith: .failure(.invalidData)) {
+            expect(sut, toCompleteWith: failure(.invalidData)) {
                 let json = try! JSONSerialization.data(withJSONObject: itemsToJSON(feedItems: []))
                 client.complete(withStatusCode: code, data: json, at: index)
             }
@@ -55,7 +55,7 @@ final class RemoteFeedLoaderTests: XCTestCase {
     
     func test_load_deliverErrorOn200HTTPResponseWithInvalidJSON() {
         let (sut, client) = makeSUT()
-        expect(sut, toCompleteWith: .failure(.invalidData)) {
+        expect(sut, toCompleteWith: failure(.invalidData)) {
             let invalidJSON = Data("invalid json".utf8)
             client.complete(withStatusCode: 200, data: invalidJSON)
         }
@@ -101,8 +101,7 @@ final class RemoteFeedLoaderTests: XCTestCase {
     
     private func makeSUT(url: URL = URL(string: "https://dummy.com")!,
                          file: StaticString = #filePath,
-                         line: UInt = #line) -> (sut: RemoteFeedLoader,
-                                                                           client: HTTPClientSpy) {
+                         line: UInt = #line) -> (sut: RemoteFeedLoader,client: HTTPClientSpy) {
         let client = HTTPClientSpy()
         let sut = RemoteFeedLoader(url: url, client: client)
         trackForMemoryLeak(sut, file: file, line: line)
@@ -193,5 +192,9 @@ final class RemoteFeedLoaderTests: XCTestCase {
                                            headerFields: nil)!
             messages[index].completion(.success(data, response))
         }
+    }
+    
+    private func failure(_ error: RemoteFeedLoader.Error) -> RemoteFeedLoader.Result {
+        .failure(error)
     }
 }

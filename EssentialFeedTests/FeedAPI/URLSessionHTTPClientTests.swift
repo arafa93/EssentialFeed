@@ -27,10 +27,10 @@ class URLSessionHTTPClient {
 class URLSessionHTTPClientTests: XCTestCase {
     
     func test_getFromURL_failsOnRequestError() {
-        URLProtocolSpy.startInterceptingRequests()
+        URLProtocolStub.startInterceptingRequests()
         let url = URL(string: "http://any-url.com")!
         let error = NSError(domain: "any error", code: 1)
-        URLProtocolSpy.stub(url: url, error: error)
+        URLProtocolStub.stub(url: url, data: nil, responds: nil, error: error)
         
         let sut = URLSessionHTTPClient()
         
@@ -48,28 +48,30 @@ class URLSessionHTTPClientTests: XCTestCase {
         }
         
         wait(for: [exp], timeout: 1.0)
-        URLProtocolSpy.startInterceptingRequests()
+        URLProtocolStub.startInterceptingRequests()
     }
     
     // MARK: - Helpers
     
-    private class URLProtocolSpy: URLProtocol {
+    private class URLProtocolStub: URLProtocol {
         private static var stubs = [URL: Stub]()
         
         private struct Stub {
+            let data: Data?
+            let responds: URLResponse?
             let error: Error?
         }
         
-        static func stub(url: URL, error: Error? = nil) {
-            stubs[url] = Stub(error: error)
+        static func stub(url: URL, data: Data?, responds: URLResponse?, error: Error?) {
+            stubs[url] = Stub(data: data, responds: responds, error: error)
         }
         
         static func startInterceptingRequests() {
-            URLProtocol.registerClass(URLProtocolSpy.self)
+            URLProtocol.registerClass(URLProtocolStub.self)
         }
         
         static func stopInterceptingRequests() {
-            URLProtocol.unregisterClass(URLProtocolSpy.self)
+            URLProtocol.unregisterClass(URLProtocolStub.self)
             stubs.removeAll()
         }
         
@@ -84,8 +86,16 @@ class URLSessionHTTPClientTests: XCTestCase {
         }
         
         override func startLoading() {
-            guard let url = request.url, let stub = URLProtocolSpy.stubs[url] else {
+            guard let url = request.url, let stub = URLProtocolStub.stubs[url] else {
                 return
+            }
+            
+            if let data = stub.data {
+                client?.urlProtocol(self, didLoad: data)
+            }
+            
+            if let responds = stub.responds {
+                client?.urlProtocol(self, didReceive: responds, cacheStoragePolicy: .notAllowed)
             }
             
             if let error = stub.error {

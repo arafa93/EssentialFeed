@@ -7,6 +7,8 @@
 
 import Foundation
 
+// We can use extension `URLSession: HTTPClient {` instead
+
 class URLSessionHTTPClient: HTTPClient {
     private let session: URLSession
     

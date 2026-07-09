@@ -29,6 +29,8 @@
 /* End PBXContainerItemProxy section */
 
 /* Begin PBXFileReference section */
+		4F067AC72FFFEFC700432E3F /* EssentialFeedAPIEndToEndTests */ = {isa = PBXFileReference; lastKnownFileType = folder; path = EssentialFeedAPIEndToEndTests; sourceTree = "<group>"; };
+		4F067AC82FFFEFC700432E3F /* EssentialFeedTests */ = {isa = PBXFileReference; lastKnownFileType = folder; path = EssentialFeedTests; sourceTree = "<group>"; };
 		4FAE43822FFFE09B00F6D434 /* EssentialFeedAPIEndToEndTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = EssentialFeedAPIEndToEndTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 		4FDFC8E92FF69EDD008AA36C /* EssentialFeed.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = EssentialFeed.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		4FDFC8F22FF69EDD008AA36C /* EssentialFeedTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = EssentialFeedTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -103,6 +105,8 @@
 		4FDFC8DF2FF69EDD008AA36C = {
 			isa = PBXGroup;
 			children = (
+				4F067AC82FFFEFC700432E3F /* EssentialFeedTests */,
+				4F067AC72FFFEFC700432E3F /* EssentialFeedAPIEndToEndTests */,
 				4FDFC8EB2FF69EDD008AA36C /* EssentialFeed */,
 				4FDFC8F62FF69EDD008AA36C /* EssentialFeedTests */,
 				4FAE43832FFFE09B00F6D434 /* EssentialFeedAPIEndToEndTests */,
